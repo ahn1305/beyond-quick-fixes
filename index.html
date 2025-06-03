@@ -20,7 +20,7 @@
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#author" class="nav-link">Author</a></li>
                 <li><a href="#feedback" class="nav-link">Feedback</a></li>
-                <li><a href="./images/teaser.png" download onclick="this.onclick=null; recordDownload()" class="nav-link">Download Teaser</a></li>
+                <li><a style="cursor: pointer;" id="openTeaserPopupBtn" class="nav-link">Download Teaser</a></li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -145,6 +145,12 @@
 <script>
   // ✅ Direct reference to the root-level "count" key
   const dbUrl = 'https://bqf-downloads-count-default-rtdb.firebaseio.com/count.json';
+
+  document.getElementById("openTeaserPopupBtn").addEventListener("click", () => {
+  document.getElementById("teaserPopup").classList.remove("hidden");
+  fetchDownloadCount(); // Only fetch when shown
+});
+
 
   // 📦 Show popup after 3 seconds
   window.onload = function () {
