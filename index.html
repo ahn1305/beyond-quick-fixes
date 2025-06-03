@@ -20,6 +20,7 @@
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#author" class="nav-link">Author</a></li>
                 <li><a href="#feedback" class="nav-link">Feedback</a></li>
+                <li><a href="./images/teaser.png" download onclick="this.onclick=null; recordDownload()" class="nav-link">Download Teaser</a></li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -28,6 +29,168 @@
             </div>
         </div>
     </nav>
+
+  <!-- Include in your page -->
+<div id="teaserPopup" class="popup hidden">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <h2>📘 Download My Book Teaser</h2>
+    <p>Excited? Get a glimpse of what's coming!</p>
+    <a href="./images/teaser.png" download onclick="this.onclick=null; recordDownload()">Download Teaser</a>
+
+    <p>Total Downloads: <span id="downloadCount">...</span></p>
+  </div>
+</div>
+
+<!-- CSS Styling -->
+<style>
+  /* Popup backdrop */
+  .popup {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .popup:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+    animation: popupFadeIn 0.3s ease forwards;
+  }
+
+  @keyframes popupFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Popup container */
+  .popup-content {
+    background: #fff;
+    padding: 30px 35px;
+    border-radius: 12px;
+    max-width: 350px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+  }
+
+  /* Close button */
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 24px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .close-btn:hover {
+    color: #e74c3c;
+  }
+
+  /* Header */
+  .popup-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #222;
+  }
+
+  /* Paragraph */
+  .popup-content p {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 25px;
+    line-height: 1.4;
+  }
+
+  /* Download button styled as a button */
+  .popup-content a {
+    display: inline-block;
+    background: #3498db;
+    color: white;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+  .popup-content a:hover {
+    background: #2980b9;
+    box-shadow: 0 6px 20px rgba(41, 128, 185, 0.6);
+  }
+
+  /* Download count styling */
+  #downloadCount {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.2rem;
+  }
+</style>
+
+<script>
+  // ✅ Direct reference to the root-level "count" key
+  const dbUrl = 'https://bqf-downloads-count-default-rtdb.firebaseio.com/count.json';
+
+  // 📦 Show popup after 3 seconds
+  window.onload = function () {
+    setTimeout(() => {
+      document.getElementById("teaserPopup").classList.remove("hidden");
+      fetchDownloadCount();
+    }, 3000);
+  };
+
+  // ❌ Close the popup
+  function closePopup() {
+    document.getElementById("teaserPopup").classList.add("hidden");
+  }
+
+  // 📈 Record a new download by incrementing count
+function recordDownload() {
+  fetch(dbUrl)
+    .then(res => res.json())
+    .then(data => {
+      const count = (parseInt(data?.count) || 0) + 1;
+      return fetch(dbUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ count })  // ✅ Send as { "count": number }
+      });
+    })
+    .then(() => setTimeout(fetchDownloadCount, 500))
+    .catch(err => console.error("Error recording download:", err));
+}
+
+// 🔢 Fetch current download count and show it
+function fetchDownloadCount() {
+  fetch(dbUrl)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("downloadCount").innerText = data?.count || 0;
+    })
+    .catch(err => {
+      console.error("Error fetching download count:", err);
+      document.getElementById("downloadCount").innerText = "N/A";
+    });
+}
+
+</script>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
