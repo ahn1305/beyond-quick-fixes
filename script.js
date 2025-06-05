@@ -314,8 +314,6 @@ function submitFeedback() {
         document.querySelector(".professional-options").style.display = "none"
         document.querySelector(".foreword-details").style.display = "none"
 
-        // Clear saved data
-        clearSavedData()
       } else {
         console.log(response)
         throw new Error(responseJson.message || "Form submission failed")
@@ -564,94 +562,7 @@ document.addEventListener("keydown", (e) => {
   }
 })
 
-// Add form auto-save functionality (saves to localStorage)
-function initializeAutoSave() {
-  const form = document.getElementById("feedbackForm")
-  const STORAGE_KEY = "feedback_form_draft"
-
-  // Load saved data
-  function loadSavedData() {
-    try {
-      const savedData = localStorage.getItem(STORAGE_KEY)
-      if (savedData) {
-        const data = JSON.parse(savedData)
-
-        Object.keys(data).forEach((key) => {
-          const field = form.querySelector(`[name="${key}"]`)
-          if (field) {
-            if (field.type === "radio") {
-              const radioOption = form.querySelector(`[name="${key}"][value="${data[key]}"]`)
-              if (radioOption) {
-                radioOption.checked = true
-                radioOption.dispatchEvent(new Event("change"))
-              }
-            } else if (field.type === "checkbox") {
-              field.checked = data[key] === "yes"
-              field.dispatchEvent(new Event("change"))
-            } else {
-              field.value = data[key]
-            }
-          }
-        })
-      }
-    } catch (error) {
-      console.warn("Could not load saved form data:", error)
-    }
-  }
-
-  // Save data
-  function saveData() {
-    try {
-      const formData = new FormData(form)
-      const data = {}
-
-      for (const [key, value] of formData.entries()) {
-        data[key] = value
-      }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    } catch (error) {
-      console.warn("Could not save form data:", error)
-    }
-  }
-
-  // Clear saved data
-  function clearSavedData() {
-    try {
-      localStorage.removeItem(STORAGE_KEY)
-    } catch (error) {
-      console.warn("Could not clear saved form data:", error)
-    }
-  }
-
-  // Auto-save on input
-  form.addEventListener("input", debounce(saveData, 1000))
-  form.addEventListener("change", saveData)
-
-  // Clear saved data on successful submission
-  form.addEventListener("submit", () => {
-    setTimeout(clearSavedData, 3000) // Clear after success modal
-  })
-
-  // Load saved data on page load
-  loadSavedData()
-}
-
-// Debounce function for auto-save
-function debounce(func, wait) {
-  let timeout
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
-
-// Initialize auto-save when DOM is loaded
-document.addEventListener("DOMContentLoaded", initializeAutoSave)
+ 
 
 // Add accessibility improvements
 function enhanceAccessibility() {
@@ -764,19 +675,3 @@ const printStyles = `
 }
 `
 
-// Add print styles
-const printStyleSheet = document.createElement("style")
-printStyleSheet.textContent = printStyles
-document.head.appendChild(printStyleSheet)
-
-// Final initialization
-console.log("Beyond Quick Fixes website initialized successfully")
-
-// Declare clearSavedData function
-function clearSavedData() {
-  try {
-    localStorage.removeItem("feedback_form_draft")
-  } catch (error) {
-    console.warn("Could not clear saved form data:", error)
-  }
-}

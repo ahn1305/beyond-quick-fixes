@@ -143,16 +143,14 @@
 </style>
 
 <script>
-  // ✅ Direct reference to the root-level "count" key
-  const dbUrl = 'https://bqf-downloads-count-default-rtdb.firebaseio.com/count.json';
+  const workerUrl = 'https://snowy-cell-8ac5.innotechtitans.workers.dev/';  // replace with your deployed Worker URL
 
+  // Show popup and fetch count on button click or page load (optional)
   document.getElementById("openTeaserPopupBtn").addEventListener("click", () => {
-  document.getElementById("teaserPopup").classList.remove("hidden");
-  fetchDownloadCount(); // Only fetch when shown
-});
+    document.getElementById("teaserPopup").classList.remove("hidden");
+    fetchDownloadCount();
+  });
 
-
-  // 📦 Show popup after 3 seconds
   window.onload = function () {
     setTimeout(() => {
       document.getElementById("teaserPopup").classList.remove("hidden");
@@ -160,43 +158,44 @@
     }, 3000);
   };
 
-  // ❌ Close the popup
+  // Close popup function
   function closePopup() {
     document.getElementById("teaserPopup").classList.add("hidden");
   }
 
-  // 📈 Record a new download by incrementing count
-function recordDownload() {
-  fetch(dbUrl)
-    .then(res => res.json())
-    .then(data => {
-      const count = (parseInt(data?.count) || 0) + 1;
-      return fetch(dbUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ count })  // ✅ Send as { "count": number }
+  // Record a new download by POSTing to the Worker
+  function recordDownload() {
+    fetch(workerUrl, {
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Refresh count after a short delay
+          setTimeout(fetchDownloadCount, 500);
+        } else {
+          console.error("Error recording download:", data.error);
+        }
+      })
+      .catch(err => console.error("Error recording download:", err));
+  }
+
+  // Fetch current count from Worker and display it
+  function fetchDownloadCount() {
+    fetch(workerUrl, { method: "GET" })
+      .then(res => res.json())
+      .then(data => {
+        const count = parseInt(data.count) || 0;
+        document.getElementById("downloadCount").innerText = count;
+      })
+      .catch(err => {
+        console.error("Error fetching download count:", err);
+        document.getElementById("downloadCount").innerText = "N/A";
       });
-    })
-    .then(() => setTimeout(fetchDownloadCount, 500))
-    .catch(err => console.error("Error recording download:", err));
-}
-
-// 🔢 Fetch current download count and show it
-function fetchDownloadCount() {
-  fetch(dbUrl)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("downloadCount").innerText = data?.count || 0;
-    })
-    .catch(err => {
-      console.error("Error fetching download count:", err);
-      document.getElementById("downloadCount").innerText = "N/A";
-    });
-}
-
+  }
 </script>
+
+
 
     <!-- Hero Section -->
     <section id="home" class="hero">
