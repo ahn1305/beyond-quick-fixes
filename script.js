@@ -1,3 +1,129 @@
+// script.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+// 🔹 Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyD-V-1UxGkTpww3sZLu5ZcEr8OtZ3aTaNI",
+  authDomain: "bqf-downloads-count.firebaseapp.com",
+  projectId: "bqf-downloads-count",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔹 DOM Elements
+const carousel = document.getElementById("voices-carousel");
+const form = document.getElementById("feedbackForm");
+
+// 🔹 Handle Form Submission (if form exists)
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get("name") || "Anonymous",
+      email: formData.get("email"),
+      userType: formData.get("userType"),
+      rating: formData.get("rating"),
+      favoriteChapter: formData.get("favoriteChapter"),
+      keyTakeaway: formData.get("keyTakeaway"),
+      application: formData.get("application"),
+      feedbackText: formData.get("feedbackText"),
+      industry: formData.get("industry"),
+      teamSize: formData.get("teamSize"),
+      forewordInterest: formData.get("forewordInterest") === "yes",
+      professionalBio: formData.get("professionalBio"),
+      leadershipPhilosophy: formData.get("leadershipPhilosophy"),
+      recommendation: formData.get("recommendation"),
+      timestamp: serverTimestamp()
+    };
+
+    try {
+      await addDoc(collection(db, "feedbacks"), data);
+      form.reset();
+      await loadVoices();
+    } catch (err) {
+      console.error("Submission Error:", err);
+      alert("Oops! Something went wrong.");
+    }
+  });
+}
+
+// 🔹 Load and Render Feedbacks
+async function loadVoices() {
+  if (!carousel) return;
+  carousel.innerHTML = "";
+
+  const q = query(collection(db, "feedbacks"), orderBy("timestamp", "desc"));
+  const snapshot = await getDocs(q);
+
+  const feedbacks = [];
+  snapshot.forEach(doc => feedbacks.push(doc.data()));
+
+  if (feedbacks.length === 0) {
+    carousel.innerHTML = `<div class="no-feedback">No feedbacks yet.</div>`;
+    return;
+  }
+
+  const cards = feedbacks.map(f => {
+    const card = document.createElement("div");
+    card.className = "voice-card";
+    card.innerHTML = `
+      <h4>${f.name || "Anonymous"}</h4>
+      <p class="voice-rating">⭐ ${f.rating || "N/A"} / 5</p>
+      <p><strong>Takeaway:</strong> ${f.keyTakeaway || "-"}</p>
+      ${f.feedbackText ? `<p><strong>Comment:</strong> ${f.feedbackText}</p>` : ""}
+    `;
+    return card;
+  });
+
+  // Repeat cards to allow auto-scroll
+  let pass = 0;
+  while (carousel.scrollWidth <= carousel.clientWidth && pass < 10) {
+    cards.forEach(card => carousel.appendChild(card.cloneNode(true)));
+    pass++;
+  }
+
+  // Start scroll
+  carousel.scrollLeft = 0;
+  startContinuousScroll();
+}
+
+// 🔹 Smooth Continuous Scroll with Pause on Hover
+function startContinuousScroll() {
+  let speed = 0.6;
+  let paused = false;
+
+  carousel.addEventListener('mouseenter', () => paused = true);
+  carousel.addEventListener('mouseleave', () => paused = false);
+
+  function step() {
+    if (!paused) {
+      carousel.scrollLeft += speed;
+      if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
+        carousel.scrollLeft = 0;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+// 🔹 Init
+loadVoices();
+
+
 // Navigation functionality
 document.addEventListener("DOMContentLoaded", () => {
   const hamburger = document.querySelector(".hamburger")

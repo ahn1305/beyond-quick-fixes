@@ -967,3 +967,125 @@ html {
 }
 
 /* Responsive adjustments for images */
+
+
+.voices-section {
+  background: #f4f6f9;
+  padding: 4rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Section Heading */
+.voices-heading {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #1e2a38;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Carousel Wrapper */
+.voices-carousel {
+  display: flex;
+  overflow: hidden;
+  gap: 1.5rem;
+  padding: 0 1rem;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+/* Each Card */
+.voice-card {
+  flex: 0 0 320px;
+  min-width: 320px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  transition: transform 0.3s;
+  white-space: normal;
+  display: inline-block;
+}
+
+
+.voice-card:hover {
+  transform: translateY(-6px);
+}
+
+.voice-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.voice-rating {
+  color: #f39c12;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+.voice-card p {
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
+  color: #444;
+  line-height: 1.5;
+}
+
+.voice-card strong {
+  color: #2c3e50;
+}
+
+/* Fade edges for depth */
+.voices-section::before,
+.voices-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.voices-section::before {
+  left: 0;
+  background: linear-gradient(to right, #f4f6f9 0%, transparent 100%);
+}
+
+.voices-section::after {
+  right: 0;
+  background: linear-gradient(to left, #f4f6f9 0%, transparent 100%);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .voice-card {
+    flex: 0 0 85%;
+  }
+
+  .voices-carousel {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .voice-card {
+    flex: 0 0 85%;
+    min-width: 85%;
+  }
+
+  .voices-carousel {
+    overflow-x: hidden; /* Important to auto-scroll instead of manual swipe */
+  }
+}
+
+
+.no-feedback {
+  font-size: 1.2rem;
+  color: #888;
+  text-align: center;
+  padding: 2rem 1rem;
+  width: 100%;
+}
