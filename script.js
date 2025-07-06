@@ -145,21 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 
   // Smooth scrolling for navigation links
-  navLinks.forEach((link) => {
-    link.addEventListener("click", function (e) {
+ navLinks.forEach((link) => {
+  link.addEventListener("click", function (e) {
+    const targetId = this.getAttribute("href")
+
+    // Only intercept if it's an internal section link (starts with '#')
+    if (targetId && targetId.startsWith("#")) {
       e.preventDefault()
-      const targetId = this.getAttribute("href")
       const targetSection = document.querySelector(targetId)
 
       if (targetSection) {
-        const offsetTop = targetSection.offsetTop - 70 // Account for fixed navbar
+        const offsetTop = targetSection.offsetTop - 70 // Adjust for navbar
         window.scrollTo({
           top: offsetTop,
           behavior: "smooth",
         })
       }
-    })
+    }
   })
+})
+
 
   // Form functionality
   initializeFeedbackForm()
