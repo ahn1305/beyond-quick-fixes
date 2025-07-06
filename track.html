@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Track Your Book Order</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+    }
+    h2 {
+      color: #222;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #222;
+      color: white;
+      border: none;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #333;
+    }
+    .status-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Beyond Quick Fixes</h2>
+            </div>
+            <ul class="nav-menu">
+        
+                <li><a href="/" class="nav-link">Back to Home</a></li>
+                <!-- <li><a style="cursor: pointer;" id="" class="nav-link">Download Teaser</a></li> -->
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+    <br />    <br /> <br />        <br />
+
+  <h2>📦 Track Your Book Order</h2>
+  <p>Enter your <strong>Order ID</strong> or <strong>Phone Number</strong> below:</p>
+  <input type="text" id="query" placeholder="e.g. BQF001 or 9876543210" />
+  <br />
+  <button onclick="trackOrder()">Track Order</button>
+  
+  <div id="result"></div>
+
+  <script>
+    async function trackOrder() {
+      const query = document.getElementById("query").value.trim();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "🔍 Searching...";
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbyr_2KV_Klodr8KQg1Ww2GfHdK5RcHLfU9ZDfn1CEO3GlqEwJ2dswjrYMrH8Gj5iVrMOA/exec?q=" + encodeURIComponent(query));
+        const data = await res.json();
+
+        if (data.status === "not_found") {
+          resultDiv.innerHTML = "<p>❌ Order not found. Please check your ID or phone number.</p>";
+          return;
+        }
+
+        let trackingLink = "";
+        if (data["Tracking ID"]) {
+          trackingLink = `<p><strong>📮 India Post Tracking:</strong><br>
+          <a href="https://www.indiapost.gov.in/vas/Pages/trackconsignment.aspx" target="_blank">
+            Click here to track: ${data["Tracking ID"]}
+          </a></p>`;
+        } else {
+          trackingLink = "<p>📦 Tracking ID not available yet. Please check back later.</p>";
+        }
+
+        resultDiv.innerHTML = `
+          <div class="status-box">
+            <p><strong>Name:</strong> ${data["Full Name"]}</p>
+            <p><strong>Status:</strong> ${data["Status"]}</p>
+            <p><strong>Order ID:</strong> ${data["Order ID"]}</p>
+            ${trackingLink}
+            <p><strong>Last Updated:</strong> ${data["Last Update"]}</p>
+          </div>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = "<p>⚠️ Error loading data. Try again later.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
