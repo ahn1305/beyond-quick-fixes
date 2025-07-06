@@ -4,7 +4,6 @@
   <title>Track Your Book Order</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
@@ -45,6 +44,8 @@
       display: inline-block;
     }
   </style>
+      <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
     <!-- Navigation -->
@@ -54,9 +55,7 @@
                 <h2>Beyond Quick Fixes</h2>
             </div>
             <ul class="nav-menu">
-        
                 <li><a href="/" class="nav-link">Back to Home</a></li>
-                <!-- <li><a style="cursor: pointer;" id="" class="nav-link">Download Teaser</a></li> -->
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -72,7 +71,9 @@
   <input type="text" id="query" placeholder="e.g. BQF001 or 9876543210" />
   <br />
   <button onclick="trackOrder()">Track Order</button>
-  
+  <button>
+    <a href="/" style="color: white; text-decoration: none;">Back to Home</a>
+  </button>  
   <div id="result"></div>
 
   <script>
